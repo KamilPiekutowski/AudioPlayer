@@ -1,0 +1,14 @@
+c:\users\kamilp\documents\visual studio 2015\Projects\AudioPlayer\AudioPlayer\bin\Debug\AudioPlayer.exe.config
+c:\users\kamilp\documents\visual studio 2015\Projects\AudioPlayer\AudioPlayer\bin\Debug\AudioPlayer.exe
+c:\users\kamilp\documents\visual studio 2015\Projects\AudioPlayer\AudioPlayer\bin\Debug\AudioPlayer.pdb
+c:\users\kamilp\documents\visual studio 2015\Projects\AudioPlayer\AudioPlayer\obj\Debug\AudioPlayer.csprojResolveAssemblyReference.cache
+c:\users\kamilp\documents\visual studio 2015\Projects\AudioPlayer\AudioPlayer\obj\Debug\MainWindow.g.cs
+c:\users\kamilp\documents\visual studio 2015\Projects\AudioPlayer\AudioPlayer\obj\Debug\App.g.cs
+c:\users\kamilp\documents\visual studio 2015\Projects\AudioPlayer\AudioPlayer\obj\Debug\AudioPlayer_MarkupCompile.cache
+c:\users\kamilp\documents\visual studio 2015\Projects\AudioPlayer\AudioPlayer\obj\Debug\AudioPlayer_MarkupCompile.lref
+c:\users\kamilp\documents\visual studio 2015\Projects\AudioPlayer\AudioPlayer\obj\Debug\MainWindow.baml
+c:\users\kamilp\documents\visual studio 2015\Projects\AudioPlayer\AudioPlayer\obj\Debug\AudioPlayer.g.resources
+c:\users\kamilp\documents\visual studio 2015\Projects\AudioPlayer\AudioPlayer\obj\Debug\AudioPlayer.Properties.Resources.resources
+c:\users\kamilp\documents\visual studio 2015\Projects\AudioPlayer\AudioPlayer\obj\Debug\AudioPlayer.csproj.GenerateResource.Cache
+c:\users\kamilp\documents\visual studio 2015\Projects\AudioPlayer\AudioPlayer\obj\Debug\AudioPlayer.exe
+c:\users\kamilp\documents\visual studio 2015\Projects\AudioPlayer\AudioPlayer\obj\Debug\AudioPlayer.pdb
