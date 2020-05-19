@@ -16,7 +16,9 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Microsoft.Win32;
 using System.Runtime.InteropServices;
-
+using System.Threading;
+using ListViewItem = System.Windows.Controls.ListViewItem;
+using System.Windows.Controls.Primitives;
 
 namespace AudioPlayer
 {
@@ -39,6 +41,11 @@ namespace AudioPlayer
 
             this.Title = "Audio Player";
             this.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            bool isPlaying = false;
+            bool isUserTriggered = false;
+
+            Thread thread = new Thread(test);
+            thread.Start();
         }
 
         void OnLoadPlayList(object sender, RoutedEventArgs e)
@@ -57,7 +64,9 @@ namespace AudioPlayer
         {
             Microsoft.Win32.OpenFileDialog openFileDialog = new Microsoft.Win32.OpenFileDialog();
             openFileDialog.Multiselect = true;
+            playListCollection.Clear();
             openFileDialog.Filter = "WAV files (*.wav)|*.wav|All files (*.*)|*.*";
+
             if (openFileDialog.ShowDialog() == true)
             {
                 Playlist.Items.Clear();
@@ -70,11 +79,26 @@ namespace AudioPlayer
                     idx++;
                 }     
             }
+
+            Playlist.SelectedIndex = 0;
         }
 
         private void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            long millisecs = 120000;
+
+        }
+
+        private void ProgressSlider_DragCompleted(object sender, DragCompletedEventArgs e)
+        {
+            Int32 ret = -1;
+            Int32 length = 0;
+
+            StringBuilder buff = new StringBuilder(32);
+
+            ret = mciSendString("status " + mediaName + " length", buff, buff.Capacity, IntPtr.Zero);
+            length = Int32.Parse(buff.ToString());
+
+            long millisecs = (long)((ProgressSlider.Value / 100) * (double)length);
             String playCommand = String.Format("Play " + mediaName + " from {0}", millisecs);
             long status = mciSendString(playCommand, null, 0, IntPtr.Zero);
         }
@@ -87,18 +111,78 @@ namespace AudioPlayer
         private void PlayPause_Click(object sender, RoutedEventArgs e)
         {
             Int32 ret = -1;
-            String playCommand = "Close " + mediaName;
-            mciSendString(playCommand, null, 0, IntPtr.Zero);
-            var filepath = playListCollection.First().Value;
-            playCommand = "Open \"" + filepath + "\" type MPEGVideo alias " + mediaName;
-            ret = mciSendString(playCommand, null, 0, IntPtr.Zero);
-            playCommand = "Play " + mediaName + " notify";
-            ret = mciSendString(playCommand, null, 0, IntPtr.Zero);
+            String playCommand;
+            // Opening first file from the list.
+
+            if (!isPlaying && playListCollection.Count != 0)
+            {
+                playCommand = "Close " + mediaName;
+                ret = mciSendString(playCommand, null, 0, IntPtr.Zero);
+                var filepath = playListCollection.First().Value;
+                playCommand = "Open \"" + filepath + "\" type waveaudio alias " + mediaName;
+                ret = mciSendString(playCommand, null, 0, IntPtr.Zero);
+                playCommand = "Play " + mediaName + " notify";
+                ret = mciSendString(playCommand, null, 0, IntPtr.Zero);
+            }
+            else
+            {
+                playCommand = "Pause " + mediaName + " notify";
+                ret = mciSendString(playCommand, null, 0, IntPtr.Zero);
+            }
+
+            isPlaying = !isPlaying;
 
         }
 
         private void Next_Click(object sender, RoutedEventArgs e)
         {
+
+            
+        }
+
+        private void test()
+        {
+            while (true)
+            {
+
+
+                if (isPlaying)
+                {
+                    this.Dispatcher.Invoke(() =>
+                    {
+                        Int32 ret = -1;
+                        Int32 length = 0;
+                        Int32 position = 0;
+                        StringBuilder buff = new StringBuilder(32);
+
+                        ret = mciSendString("status " + mediaName + " length", buff, buff.Capacity, IntPtr.Zero);
+
+                        try
+                        {
+                            length = Int32.Parse(buff.ToString());
+                        }
+                        catch (InvalidCastException e)
+                        {
+                            //quick fix, if there is nothing in the buffer then value is 0
+                        }
+
+                        ret = mciSendString("status " + mediaName + " position", buff, buff.Capacity, IntPtr.Zero);
+
+                        try
+                        {
+                            position = Int32.Parse(buff.ToString());
+                        }
+                        catch (InvalidCastException e)
+                        {
+                            //quick fix, if there is nothing in the buffer then value is 0
+                        }
+
+                        ProgressSlider.Value = ((float) position / (float) length) * 100;
+                    });
+                }
+
+                Thread.Sleep(1000);
+            }
 
         }
 

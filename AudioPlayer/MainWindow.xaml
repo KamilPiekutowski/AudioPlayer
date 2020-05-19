@@ -8,12 +8,12 @@
         Title="Audio Player" Height="500" Width="350" ResizeMode="NoResize" Topmost="False" WindowState="Normal">
     <Grid x:Name="MainGrid">
         <StackPanel>
-            <ListView Loaded="OnLoadPlayList" x:Name="Playlist"  Height="288" Margin="5" BorderThickness="0">
+            <ListView Loaded="OnLoadPlayList" x:Name="Playlist"  Height="288" Margin="5" BorderThickness="0" SelectedIndex="0">
                 
             </ListView>
             <Button Name="LoadFiles" Content="Load Files" FontSize="12" Height="20" Width="100" HorizontalAlignment="Center" Click="LoadFiles_Click" Margin="5"> </Button>
-            
-                <Slider Margin="10" ValueChanged="Slider_ValueChanged"></Slider>
+
+            <Slider x:Name="ProgressSlider" Margin="10" ValueChanged="Slider_ValueChanged" Minimum="0" Maximum="100" Thumb.DragCompleted="ProgressSlider_DragCompleted"></Slider>
             <StackPanel x:Name="PlayButtons" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="10">
                 <Button x:Name="Prev" Width="50" Height="30" Margin="5" Click="Prev_Click"></Button>
                 <Button x:Name="PlayPause" Width="50" Height="30" Margin="5" Click="PlayPause_Click"></Button>
