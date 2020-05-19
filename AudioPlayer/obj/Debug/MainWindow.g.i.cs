@@ -153,12 +153,6 @@ namespace AudioPlayer {
             
             #line default
             #line hidden
-            
-            #line 11 "..\..\MainWindow.xaml"
-            this.Playlist.SelectionChanged += new System.Windows.Controls.SelectionChangedEventHandler(this.Playlist_SelectionChanged);
-            
-            #line default
-            #line hidden
             return;
             case 3:
             this.LoadFiles = ((System.Windows.Controls.Button)(target));
