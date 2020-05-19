@@ -35,5 +35,51 @@ namespace AudioPlayer
         {
 
         }
+
+        void OnLoadPlayList(object sender, RoutedEventArgs e)
+        {
+            Console.WriteLine("Onload Playlist");
+            for(int i = 1; i < 22; i++)
+            {
+                TextBlock textBlock = new TextBlock();
+                textBlock.Text = (i.ToString() + ".");
+                Playlist.Items.Add(textBlock);
+            }          
+        }
+
+        private void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+
+        }
+
+        private void Prev_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void PlayPause_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Next_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void VolumeButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void VolumeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+
+        }
+
+        private void Playlist_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
     }
 }

@@ -8,18 +8,18 @@
         Title="Audio Player" Height="500" Width="350" ResizeMode="NoResize" Topmost="False" WindowState="Normal">
     <Grid x:Name="MainGrid">
         <StackPanel>
-            <TextBlock x:Name="Playlist" FontSize="20" Height="300" Margin="5">
+            <ListView Loaded="OnLoadPlayList" x:Name="Playlist"  Height="288" Margin="5" BorderThickness="0">
                 
-            </TextBlock>
+            </ListView>
             <Button Name="LoadFiles" Content="Load Files" FontSize="12" Height="20" Width="100" HorizontalAlignment="Center" Click="LoadFiles_Click" Margin="5"> </Button>
             
-                <Slider Margin="10"></Slider>
+                <Slider Margin="10" ValueChanged="Slider_ValueChanged"></Slider>
             <StackPanel x:Name="PlayButtons" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="10">
-                <Button x:Name="Prev" Width="50" Height="30" Margin="5"></Button>
-                <Button x:Name="PlayPause" Width="50" Height="30" Margin="5"></Button>
-                <Button x:Name="Next" Width="50" Height="30" Margin="5"></Button>
-                <Button x:Name="VolumeButton" Width="50" Height="30" Margin="50,0,0,0"></Button>
-                <Slider x:Name="VolumeSlider"  Width="50" Height="20" VerticalAlignment="Center" Margin="4,0,0,0"></Slider>
+                <Button x:Name="Prev" Width="50" Height="30" Margin="5" Click="Prev_Click"></Button>
+                <Button x:Name="PlayPause" Width="50" Height="30" Margin="5" Click="PlayPause_Click"></Button>
+                <Button x:Name="Next" Width="50" Height="30" Margin="5" RenderTransformOrigin="0.504,0.5" Click="Next_Click"></Button>
+                <Button x:Name="VolumeButton" Width="50" Height="30" Margin="42,0,0,0" Click="VolumeButton_Click"></Button>
+                <Slider x:Name="VolumeSlider"  Width="50" Height="20" VerticalAlignment="Center" Margin="4,0,0,0" ValueChanged="VolumeSlider_ValueChanged"></Slider>
             </StackPanel>
         </StackPanel>
     </Grid>
