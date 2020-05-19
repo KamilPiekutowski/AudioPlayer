@@ -27,3 +27,4 @@ C:\Users\ME\Source\Repos\KamilPiekutowski\AudioPlayer\AudioPlayer\obj\Debug\Audi
 C:\Users\ME\Source\Repos\KamilPiekutowski\AudioPlayer\AudioPlayer\obj\Debug\AudioPlayer.csproj.CoreCompileInputs.cache
 C:\Users\ME\Source\Repos\KamilPiekutowski\AudioPlayer\AudioPlayer\obj\Debug\AudioPlayer.exe
 C:\Users\ME\Source\Repos\KamilPiekutowski\AudioPlayer\AudioPlayer\obj\Debug\AudioPlayer.pdb
+C:\Users\ME\Source\Repos\KamilPiekutowski\AudioPlayer\AudioPlayer\obj\Debug\App.baml
