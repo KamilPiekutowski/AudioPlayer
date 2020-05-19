@@ -46,7 +46,7 @@ namespace AudioPlayer
             bool isMuted = false;
             bool isUserTriggered = false;
 
-            Thread thread = new Thread(test);
+            Thread thread = new Thread(Run);
             thread.Start();
         }
 
@@ -57,7 +57,6 @@ namespace AudioPlayer
             for (int i = 1; i < 22; i++)
             {
                 TextBlock textBlock = new TextBlock();
-                textBlock.Text = (i.ToString() + ".");
                 Playlist.Items.Add(textBlock);
             }
         }
@@ -76,25 +75,27 @@ namespace AudioPlayer
 
                 foreach (string filename in openFileDialog.FileNames)
                 {
-                    Playlist.Items.Add(idx.ToString() + "." + System.IO.Path.GetFileName(filename));
+                    Playlist.Items.Add(System.IO.Path.GetFileName(filename));
                     playListCollection[System.IO.Path.GetFileName(filename)] = filename; //populating dictionary with the filenames and their paths
                     idx++;
-                }     
+                }
+
+                Playlist.SelectedIndex = 0;
+
+                // Loading first song from hte list
+                int ret = -1;
+                string playCommand;
+
+                playCommand = "Close " + mediaName;
+                ret = mciSendString(playCommand, null, 0, IntPtr.Zero);
+                var filePath = playListCollection.First().Value;
+                playCommand = "Open \"" + filePath + "\" type mpegvideo alias " + mediaName;
+                ret = mciSendString(playCommand, null, 0, IntPtr.Zero);
+
+                isPlaying = false;
             }
 
-            Playlist.SelectedIndex = 0;
-
-            // Loading first song from hte list
-            int ret = -1;
-            string playCommand;
-
-            playCommand = "Close " + mediaName;
-            ret = mciSendString(playCommand, null, 0, IntPtr.Zero);
-            var filepath = playListCollection.First().Value;
-            playCommand = "Open \"" + filepath + "\" type mpegvideo alias " + mediaName;
-            ret = mciSendString(playCommand, null, 0, IntPtr.Zero);
-
-
+            
         }
 
         private void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -129,7 +130,17 @@ namespace AudioPlayer
 
         private void Prev_Click(object sender, RoutedEventArgs e)
         {
+            Int32 selectedIndex = Playlist.SelectedIndex;
+            Int32 playlistCount = Playlist.Items.Count - 1;
 
+            selectedIndex--;
+
+            if (selectedIndex < 0)
+            {
+                selectedIndex = 0;
+            }
+
+            PrevNextHelper(selectedIndex);
         }
 
         private void PlayPause_Click(object sender, RoutedEventArgs e)
@@ -155,10 +166,43 @@ namespace AudioPlayer
 
         private void Next_Click(object sender, RoutedEventArgs e)
         {
-            
+            Int32 selectedIndex = Playlist.SelectedIndex;
+            Int32 playlistCount = Playlist.Items.Count-1;
+
+            selectedIndex++;
+
+            if(selectedIndex > playlistCount)
+            {
+                selectedIndex = playlistCount;
+            }
+
+            PrevNextHelper(selectedIndex);
         }
 
-        private void test()
+        private void PrevNextHelper(Int32 selectedIndex) //it encapsulates common code from Prev_Click and Next_Click
+        {
+            Playlist.SelectedIndex = selectedIndex; // new selected index
+
+            String fileName = Playlist.Items[selectedIndex].ToString();
+
+            String filePath = playListCollection[fileName];
+
+            int ret = -1;
+            string playCommand;
+
+            playCommand = "Close " + mediaName;
+            ret = mciSendString(playCommand, null, 0, IntPtr.Zero);
+            playCommand = "Open \"" + filePath + "\" type mpegvideo alias " + mediaName;
+            ret = mciSendString(playCommand, null, 0, IntPtr.Zero);
+
+            if (isPlaying)
+            {
+                playCommand = "Play " + mediaName + " notify";
+                ret = mciSendString(playCommand, null, 0, IntPtr.Zero);
+            }
+        }
+
+        private void Run()
         {
             while (true)
             {
