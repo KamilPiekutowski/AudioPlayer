@@ -19,6 +19,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using ListViewItem = System.Windows.Controls.ListViewItem;
 using System.Windows.Controls.Primitives;
+using Button = System.Windows.Controls.Button;
 
 namespace AudioPlayer
 {
@@ -29,7 +30,7 @@ namespace AudioPlayer
     {
         Dictionary<string, string> playListCollection; //stores filenames and their corresponding paths
         private string mediaName = "media"; //alias used in MCI API
-        bool isPlaying; // Player state variable
+        public bool IsPlaying { get; set; } // Player state variable
         bool isMuted; // Volume State variable
         bool isUserTriggered; // defines if event is cause by the user
 
@@ -82,6 +83,11 @@ namespace AudioPlayer
 
                 Playlist.SelectedIndex = 0;
 
+                // Setting to Play Button
+                Image img = (Image)PlayPause.Content;
+                img.Source = new BitmapImage(new Uri("PlayButton.png", UriKind.RelativeOrAbsolute));
+                PlayPause.Content = img;
+
                 // Loading first song from hte list
                 int ret = -1;
                 string playCommand;
@@ -92,7 +98,7 @@ namespace AudioPlayer
                 playCommand = "Open \"" + filePath + "\" type mpegvideo alias " + mediaName;
                 ret = mciSendString(playCommand, null, 0, IntPtr.Zero);
 
-                isPlaying = false;
+                IsPlaying = false;
             }
 
             
@@ -116,7 +122,7 @@ namespace AudioPlayer
 
             long millisecs = (long)((ProgressSlider.Value / 100) * (double)length);
 
-            if (isPlaying)
+            if (IsPlaying)
             {
                 playCommand = string.Format("Play " + mediaName + " from {0}", millisecs);
                 ret = mciSendString(playCommand, null, 0, IntPtr.Zero);
@@ -149,18 +155,26 @@ namespace AudioPlayer
             string playCommand;
             // Opening first file from the list.
 
-            if (!isPlaying && playListCollection.Count != 0)
+            if (!IsPlaying && playListCollection.Count != 0)
             {
+                Image img = (Image) PlayPause.Content;
+                img.Source = new BitmapImage(new Uri("PauseButton.png", UriKind.RelativeOrAbsolute));
+                PlayPause.Content = img;
+                
                 playCommand = "Play " + mediaName + " notify";
                 ret = mciSendString(playCommand, null, 0, IntPtr.Zero);
             }
             else
             {
+                Image img = (Image) PlayPause.Content;
+                img.Source = new BitmapImage(new Uri("PlayButton.png", UriKind.RelativeOrAbsolute));
+                PlayPause.Content = img;
+
                 playCommand = "Pause " + mediaName + " notify";
                 ret = mciSendString(playCommand, null, 0, IntPtr.Zero);
             }
 
-            isPlaying = !isPlaying;
+            IsPlaying = !IsPlaying;
 
         }
 
@@ -197,7 +211,7 @@ namespace AudioPlayer
                 playCommand = "Open \"" + filePath + "\" type mpegvideo alias " + mediaName;
                 ret = mciSendString(playCommand, null, 0, IntPtr.Zero);
 
-                if (isPlaying)
+                if (IsPlaying)
                 {
                     ProgressSlider.Value = 0;
                     playCommand = "Play " + mediaName + " notify";
@@ -210,7 +224,7 @@ namespace AudioPlayer
         {
             while (true)
             {
-                if (isPlaying && playListCollection.Count != 0)
+                if (IsPlaying && playListCollection.Count != 0)
                 {
                     this.Dispatcher.Invoke(() =>
                     {
@@ -258,7 +272,18 @@ namespace AudioPlayer
 
             if(!isMuted)
             {
+
+                Image img = (Image) VolumeButton.Content;
+                img.Source = new BitmapImage(new Uri("MuteButton.png", UriKind.RelativeOrAbsolute));
+                VolumeButton.Content = img;
+           
                 audioState = "off";
+            }
+            else
+            {
+                Image img = (Image) VolumeButton.Content;
+                img.Source = new BitmapImage(new Uri("VolumeButton.png", UriKind.RelativeOrAbsolute));
+                VolumeButton.Content = img;
             }
 
             playCommand = string.Format("setaudio " + mediaName + " right {0}", audioState);

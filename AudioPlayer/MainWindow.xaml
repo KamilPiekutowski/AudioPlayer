@@ -5,24 +5,58 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AudioPlayer"
         mc:Ignorable="d"
-        Title="Audio Player" Height="500" Width="350" ResizeMode="NoResize" Topmost="False" WindowState="Normal">
-    
-        
-    
-        <Grid x:Name="MainGrid">
-            <StackPanel>
-                <ListView Loaded="OnLoadPlayList" x:Name="Playlist"  Height="288" Margin="5" BorderThickness="0" SelectedIndex="0">
-                
-                </ListView>
-            <Button Name="LoadFiles" Content="Load Files" FontSize="12" Height="20" Width="100" HorizontalAlignment="Center" Click="LoadFiles_Click" Margin="5" Style="{StaticResource RoundLoadButtonTemplate}" Background="Blue"> </Button>
+        Title="Audio Player" Height="500" Width="350" ResizeMode="NoResize" Topmost="False" WindowState="Normal" Background="Black">
+
+
+
+    <Grid x:Name="MainGrid">
+        <StackPanel Margin="0,0,0,0.4">
+            <ListView Loaded="OnLoadPlayList" x:Name="Playlist"  Height="288" Margin="5" BorderThickness="0" SelectedIndex="0">
+
+            </ListView>
+            <Button Name="LoadFiles" FontSize="12" Height="20" Width="100" HorizontalAlignment="Center" Click="LoadFiles_Click" Margin="5" Style="{StaticResource RoundLoadButtonTemplate}" Background="Blue">Load Files</Button>
             <Slider x:Name="ProgressSlider" Margin="10" ValueChanged="Slider_ValueChanged" Minimum="0" Maximum="100" Thumb.DragCompleted="ProgressSlider_DragCompleted"/>
             <StackPanel x:Name="PlayButtons" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="10">
-                <Button x:Name="Prev" Width="50" Height="50" Margin="5" Click="Prev_Click" RenderTransformOrigin="0.504,0.5" Style="{StaticResource RoundPlayButtonTemplate}"></Button>
-                <Button x:Name="PlayPause" Width="50" Height="50" Margin="5" Click="PlayPause_Click" Style="{StaticResource RoundPlayButtonTemplate}"></Button>
-                <Button x:Name="Next" Width="50" Height="50" Margin="5" RenderTransformOrigin="0.504,0.5" Click="Next_Click" Style="{StaticResource RoundPlayButtonTemplate}"></Button>
-                <Button x:Name="VolumeButton" Width="50" Height="50" Margin="42,0,0,0" Click="VolumeButton_Click" Style="{StaticResource RoundPlayButtonTemplate}"></Button>
-                    <Slider x:Name="VolumeSlider"  Width="50" Height="20" VerticalAlignment="Center" Margin="4,0,0,0" ValueChanged="VolumeSlider_ValueChanged" Minimum="0" Maximum="100" Value="80"/>
-                </StackPanel>
+                <Button x:Name="Prev" Width="50" Height="50" Margin="5" Click="Prev_Click" Style="{StaticResource RoundPlayButtonTemplate}">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <StackPanel>
+                                <Image Name="PrevImage1" Height="50" Width="50" Source="PrevButton.png" Stretch="Fill" Visibility="Visible" Margin="0,0,-0.4,0" />
+                                <Image Name="PrevImage2" Height="50" Width="50" Source="PrevButtonDark.png" Stretch="Fill" Visibility="Visible" Margin="0,0,-0.4,0" />
+                            </StackPanel>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsPressed"  Value="true">
+                                    <Setter TargetName="PrevImage1" Property="Visibility" Value="Collapsed" />
+                                    <Setter TargetName="PrevImage2" Property="Visibility" Value="Visible" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+                <Button x:Name="PlayPause" Width="50" Height="50" Margin="5" Click="PlayPause_Click" Style="{StaticResource RoundPlayButtonTemplate}">
+                    <Image x:Name="PrevButtonDark_png" Height="48" Source="PlayButton.png" Stretch="Fill" Width="48"/>
+                </Button>
+                <Button x:Name="Next" Width="50" Height="50" Margin="5" RenderTransformOrigin="0.504,0.5" Click="Next_Click" Style="{StaticResource RoundPlayButtonTemplate}">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <StackPanel>
+                                <Image Name="PrevImage1" Height="50" Width="50" Source="NextButton.png" Stretch="Fill" Visibility="Visible" Margin="0,0,-0.4,0" />
+                                <Image Name="PrevImage2" Height="50" Width="50" Source="NextButtonDark.png" Stretch="Fill" Visibility="Visible" Margin="0,0,-0.4,0" />
+                            </StackPanel>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsPressed"  Value="true">
+                                    <Setter TargetName="PrevImage1" Property="Visibility" Value="Collapsed" />
+                                    <Setter TargetName="PrevImage2" Property="Visibility" Value="Visible" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+                <Button x:Name="VolumeButton" Width="50" Height="50" Margin="42,0,0,0" Click="VolumeButton_Click" Style="{StaticResource RoundPlayButtonTemplate}">
+                    <Image x:Name="VolumeButton_png" Height="40" Source="VolumeButton.png" Stretch="Fill" Width="40"/>
+                </Button>
+                <Slider x:Name="VolumeSlider"  Width="50" Height="20" VerticalAlignment="Center" Margin="4,0,0,0" ValueChanged="VolumeSlider_ValueChanged" Minimum="0" Maximum="100" Value="80"/>
             </StackPanel>
-        </Grid>
+        </StackPanel>
+    </Grid>
 </Window>

@@ -38,6 +38,7 @@
     <Reference Include="PresentationFramework.Classic" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -96,6 +97,57 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Prev.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="NextButton.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="PrevButton.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="PlayButton.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="VolumeButton.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="PrevButtonDark.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\PrevButton.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\PrevButtonDark.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\VolumeButton.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\MuteButton.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\NextButton.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\NextButtonDark.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\PlayButton.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="NextButtonDark.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="PauseButton.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\PauseButton.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="MuteButton.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
