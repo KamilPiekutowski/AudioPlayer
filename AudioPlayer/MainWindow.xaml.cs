@@ -181,24 +181,28 @@ namespace AudioPlayer
 
         private void PrevNextHelper(Int32 selectedIndex) //it encapsulates common code from Prev_Click and Next_Click
         {
-            Playlist.SelectedIndex = selectedIndex; // new selected index
-
-            String fileName = Playlist.Items[selectedIndex].ToString();
-
-            String filePath = playListCollection[fileName];
-
-            int ret = -1;
-            string playCommand;
-
-            playCommand = "Close " + mediaName;
-            ret = mciSendString(playCommand, null, 0, IntPtr.Zero);
-            playCommand = "Open \"" + filePath + "\" type mpegvideo alias " + mediaName;
-            ret = mciSendString(playCommand, null, 0, IntPtr.Zero);
-
-            if (isPlaying)
+            if (playListCollection.Count != 0)
             {
-                playCommand = "Play " + mediaName + " notify";
+                Playlist.SelectedIndex = selectedIndex; // new selected index
+
+                String fileName = Playlist.Items[selectedIndex].ToString();
+
+                String filePath = playListCollection[fileName];
+
+                int ret = -1;
+                string playCommand;
+
+                playCommand = "Close " + mediaName;
                 ret = mciSendString(playCommand, null, 0, IntPtr.Zero);
+                playCommand = "Open \"" + filePath + "\" type mpegvideo alias " + mediaName;
+                ret = mciSendString(playCommand, null, 0, IntPtr.Zero);
+
+                if (isPlaying)
+                {
+                    ProgressSlider.Value = 0;
+                    playCommand = "Play " + mediaName + " notify";
+                    ret = mciSendString(playCommand, null, 0, IntPtr.Zero);
+                }
             }
         }
 
@@ -206,9 +210,7 @@ namespace AudioPlayer
         {
             while (true)
             {
-
-
-                if (isPlaying)
+                if (isPlaying && playListCollection.Count != 0)
                 {
                     this.Dispatcher.Invoke(() =>
                     {
