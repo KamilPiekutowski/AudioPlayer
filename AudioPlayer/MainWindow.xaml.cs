@@ -27,13 +27,14 @@ namespace AudioPlayer
     /// </summary>
     public partial class MainWindow : Window
     {
-        Dictionary<String, String> playListCollection; //stores filenames and their corresponding paths
+        Dictionary<string, string> playListCollection; //stores filenames and their corresponding paths
         private string mediaName = "media"; //alias used in MCI API
-        bool isPlaying; //Player state variable
+        bool isPlaying; // Player state variable
+        bool isMuted; // Volume State variable
         bool isUserTriggered; // defines if event is cause by the user
 
         [DllImport("winmm.dll")]
-        static extern Int32 mciSendString(string command, StringBuilder buffer, int bufferSize, IntPtr hwndCallback);
+        static extern int mciSendString(string command, StringBuilder buffer, int bufferSize, IntPtr hwndCallback);
 
         public MainWindow()
         {
@@ -42,6 +43,7 @@ namespace AudioPlayer
             this.Title = "Audio Player";
             this.WindowStartupLocation = WindowStartupLocation.CenterScreen;
             bool isPlaying = false;
+            bool isMuted = false;
             bool isUserTriggered = false;
 
             Thread thread = new Thread(test);
@@ -50,7 +52,7 @@ namespace AudioPlayer
 
         void OnLoadPlayList(object sender, RoutedEventArgs e)
         {
-            playListCollection = new Dictionary<String, String>();
+            playListCollection = new Dictionary<string, string>();
 
             for (int i = 1; i < 22; i++)
             {
@@ -81,6 +83,18 @@ namespace AudioPlayer
             }
 
             Playlist.SelectedIndex = 0;
+
+            // Loading first song from hte list
+            int ret = -1;
+            string playCommand;
+
+            playCommand = "Close " + mediaName;
+            ret = mciSendString(playCommand, null, 0, IntPtr.Zero);
+            var filepath = playListCollection.First().Value;
+            playCommand = "Open \"" + filepath + "\" type mpegvideo alias " + mediaName;
+            ret = mciSendString(playCommand, null, 0, IntPtr.Zero);
+
+
         }
 
         private void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -90,17 +104,27 @@ namespace AudioPlayer
 
         private void ProgressSlider_DragCompleted(object sender, DragCompletedEventArgs e)
         {
-            Int32 ret = -1;
-            Int32 length = 0;
+            int ret = -1;
+            int length = 0;
+            string playCommand;
 
             StringBuilder buff = new StringBuilder(32);
 
             ret = mciSendString("status " + mediaName + " length", buff, buff.Capacity, IntPtr.Zero);
-            length = Int32.Parse(buff.ToString());
+            length = int.Parse(buff.ToString());
 
             long millisecs = (long)((ProgressSlider.Value / 100) * (double)length);
-            String playCommand = String.Format("Play " + mediaName + " from {0}", millisecs);
-            long status = mciSendString(playCommand, null, 0, IntPtr.Zero);
+
+            if (isPlaying)
+            {
+                playCommand = string.Format("Play " + mediaName + " from {0}", millisecs);
+                ret = mciSendString(playCommand, null, 0, IntPtr.Zero);
+            }
+            else
+            {
+                playCommand = string.Format("Seek " + mediaName + " to {0}", millisecs);
+                ret = mciSendString(playCommand, null, 0, IntPtr.Zero);
+            }
         }
 
         private void Prev_Click(object sender, RoutedEventArgs e)
@@ -110,17 +134,12 @@ namespace AudioPlayer
 
         private void PlayPause_Click(object sender, RoutedEventArgs e)
         {
-            Int32 ret = -1;
-            String playCommand;
+            int ret = -1;
+            string playCommand;
             // Opening first file from the list.
 
             if (!isPlaying && playListCollection.Count != 0)
             {
-                playCommand = "Close " + mediaName;
-                ret = mciSendString(playCommand, null, 0, IntPtr.Zero);
-                var filepath = playListCollection.First().Value;
-                playCommand = "Open \"" + filepath + "\" type waveaudio alias " + mediaName;
-                ret = mciSendString(playCommand, null, 0, IntPtr.Zero);
                 playCommand = "Play " + mediaName + " notify";
                 ret = mciSendString(playCommand, null, 0, IntPtr.Zero);
             }
@@ -136,7 +155,6 @@ namespace AudioPlayer
 
         private void Next_Click(object sender, RoutedEventArgs e)
         {
-
             
         }
 
@@ -150,16 +168,16 @@ namespace AudioPlayer
                 {
                     this.Dispatcher.Invoke(() =>
                     {
-                        Int32 ret = -1;
-                        Int32 length = 0;
-                        Int32 position = 0;
+                        int ret = -1;
+                        int length = 0;
+                        int position = 0;
                         StringBuilder buff = new StringBuilder(32);
 
-                        ret = mciSendString("status " + mediaName + " length", buff, buff.Capacity, IntPtr.Zero);
+                        ret = mciSendString("Status " + mediaName + " length", buff, buff.Capacity, IntPtr.Zero);
 
                         try
                         {
-                            length = Int32.Parse(buff.ToString());
+                            length = int.Parse(buff.ToString());
                         }
                         catch (InvalidCastException e)
                         {
@@ -170,7 +188,7 @@ namespace AudioPlayer
 
                         try
                         {
-                            position = Int32.Parse(buff.ToString());
+                            position = int.Parse(buff.ToString());
                         }
                         catch (InvalidCastException e)
                         {
@@ -188,12 +206,44 @@ namespace AudioPlayer
 
         private void VolumeButton_Click(object sender, RoutedEventArgs e)
         {
+            int ret = -1;
+            string playCommand;
+            string audioState = "on";
 
+            if(!isMuted)
+            {
+                audioState = "off";
+            }
+
+            playCommand = string.Format("setaudio " + mediaName + " right {0}", audioState);
+            ret = mciSendString(playCommand, null, 0, IntPtr.Zero);
+
+            playCommand = string.Format("setaudio " + mediaName + " left {0}", audioState);
+            ret = mciSendString(playCommand, null, 0, IntPtr.Zero);
+
+            isMuted = !isMuted;
         }
 
         private void VolumeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
+            int ret = -1;
+            int length = 0;
+            int position = 0;
+            int volumeLevel;
 
+            StringBuilder buff = new StringBuilder(32);
+
+            volumeLevel = (int) ((VolumeSlider.Value / (double)100) * (double) 1000);
+
+            ret = mciSendString("Status " + mediaName + " left volume", buff, buff.Capacity, IntPtr.Zero);
+
+            string playCommand;
+
+            playCommand = string.Format("setaudio " + mediaName + " left volume to {0}", volumeLevel);
+            ret = mciSendString(playCommand, null, 0, IntPtr.Zero);
+
+            playCommand = string.Format("setaudio " + mediaName + " right volume to {0}", volumeLevel);
+            ret = mciSendString(playCommand, null, 0, IntPtr.Zero);
         }
 
         private void Playlist_SelectionChanged(object sender, SelectionChangedEventArgs e)
