@@ -1,8 +1,8 @@
 # AudioPlayer 1.0v
 ![AudioPlayer](AudioPlayer/AudioPlayer.PNG)
 
-This is a small WPF app utitlizing winmm.dll.
-Full descrption can be found here https://docs.microsoft.com/en-us/windows/win32/multimedia/multimedia-reference.
+This is a small WPF based Audio Player app utitlizing winmm.dll.
+More detail on winmm API can be found here https://docs.microsoft.com/en-us/windows/win32/multimedia/multimedia-reference.
 
 ## OS
 Windows
