@@ -20,5 +20,5 @@ WAV
   Note that mp3 selection from dialog is disabled.
   
 ## Binary Download
-<a id="raw-url href="https://github.com/KamilPiekutowski/AudioPlayer/tree/master/AudioPlayer/bin/Debug/AudioPlayer.exe">AudioPlayer.exe</a>
+<a id="raw-url" href="https://github.com/KamilPiekutowski/AudioPlayer/tree/master/AudioPlayer/bin/Debug/AudioPlayer.exe">AudioPlayer.exe</a>
 
