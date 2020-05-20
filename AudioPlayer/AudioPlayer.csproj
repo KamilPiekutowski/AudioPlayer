@@ -149,6 +149,24 @@
   <ItemGroup>
     <Resource Include="MuteButton.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Background.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Background.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Poweroff.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\PoweroffDark.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Poweroff.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="PoweroffDark.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

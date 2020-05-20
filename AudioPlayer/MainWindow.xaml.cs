@@ -84,9 +84,7 @@ namespace AudioPlayer
                 Playlist.SelectedIndex = 0;
 
                 // Setting to Play Button
-                Image img = (Image)PlayPause.Content;
-                img.Source = new BitmapImage(new Uri("PlayButton.png", UriKind.RelativeOrAbsolute));
-                PlayPause.Content = img;
+
 
                 // Loading first song from hte list
                 int ret = -1;
@@ -102,6 +100,12 @@ namespace AudioPlayer
             }
 
             
+        }
+
+        private void Grid_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (Mouse.LeftButton == MouseButtonState.Pressed)
+                this.DragMove();
         }
 
         private void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -315,6 +319,11 @@ namespace AudioPlayer
 
             playCommand = string.Format("setaudio " + mediaName + " right volume to {0}", volumeLevel);
             ret = mciSendString(playCommand, null, 0, IntPtr.Zero);
+        }
+
+        private void Poweroff_Click(object sender, RoutedEventArgs e)
+        {
+            Environment.Exit(0);
         }
 
         private void Playlist_SelectionChanged(object sender, SelectionChangedEventArgs e)
