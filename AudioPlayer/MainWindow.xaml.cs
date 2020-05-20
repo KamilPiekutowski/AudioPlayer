@@ -2,39 +2,25 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Forms;
 using System.Windows.Controls;
-using System.IO;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using Microsoft.Win32;
 using System.Runtime.InteropServices;
 using System.Threading;
-using ListViewItem = System.Windows.Controls.ListViewItem;
 using System.Windows.Controls.Primitives;
-using Button = System.Windows.Controls.Button;
 
 namespace AudioPlayer
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
+    // Audio Player App
     public partial class MainWindow : Window
     {
         Dictionary<string, string> playListCollection; //stores filenames and their corresponding paths
         private string mediaName = "media"; //alias used in MCI API
-        public bool IsPlaying { get; set; } // Player state variable
+        public bool isPlaying; // Player state variable
         bool isMuted; // Volume State variable
-        bool isUserTriggered; // defines if event is cause by the user
 
-        [DllImport("winmm.dll")]
+        [DllImport("winmm.dll")] // Using winmm API
         static extern int mciSendString(string command, StringBuilder buffer, int bufferSize, IntPtr hwndCallback);
 
         public MainWindow()
@@ -43,27 +29,19 @@ namespace AudioPlayer
 
             this.Title = "Audio Player";
             this.WindowStartupLocation = WindowStartupLocation.CenterScreen;
-            bool isPlaying = false;
-            bool isMuted = false;
-            bool isUserTriggered = false;
+            isPlaying = false;
+            isMuted = false;
+
+            playListCollection = new Dictionary<string, string>();
 
             Thread thread = new Thread(Run);
             thread.Start();
         }
 
-        void OnLoadPlayList(object sender, RoutedEventArgs e)
-        {
-            playListCollection = new Dictionary<string, string>();
-
-            for (int i = 1; i < 22; i++)
-            {
-                TextBlock textBlock = new TextBlock();
-                Playlist.Items.Add(textBlock);
-            }
-        }
-
+        // Allows to select and load WAV files.
         private void LoadFiles_Click(object sender, RoutedEventArgs e)
         {
+            // Select files to load.
             Microsoft.Win32.OpenFileDialog openFileDialog = new Microsoft.Win32.OpenFileDialog();
             openFileDialog.Multiselect = true;
             playListCollection.Clear();
@@ -81,10 +59,8 @@ namespace AudioPlayer
                     idx++;
                 }
 
+                // Always first item in the ListView is selected
                 Playlist.SelectedIndex = 0;
-
-                // Setting to Play Button
-
 
                 // Loading first song from hte list
                 int ret = -1;
@@ -96,12 +72,13 @@ namespace AudioPlayer
                 playCommand = "Open \"" + filePath + "\" type mpegvideo alias " + mediaName;
                 ret = mciSendString(playCommand, null, 0, IntPtr.Zero);
 
-                IsPlaying = false;
+                isPlaying = false;
             }
 
             
         }
 
+        // Enebles dragging the player accross the desktop.
         private void Grid_MouseDown(object sender, MouseButtonEventArgs e)
         {
             if (Mouse.LeftButton == MouseButtonState.Pressed)
@@ -110,9 +87,11 @@ namespace AudioPlayer
 
         private void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-
+            // TODO: This will be used when implementing the jump of the progress slider to a location
+            //       of the mouse click. 
         }
 
+        // When dragging this slider completes, the new postion of the song is set.
         private void ProgressSlider_DragCompleted(object sender, DragCompletedEventArgs e)
         {
             int ret = -1;
@@ -126,7 +105,7 @@ namespace AudioPlayer
 
             long millisecs = (long)((ProgressSlider.Value / 100) * (double)length);
 
-            if (IsPlaying)
+            if (isPlaying)
             {
                 playCommand = string.Format("Play " + mediaName + " from {0}", millisecs);
                 ret = mciSendString(playCommand, null, 0, IntPtr.Zero);
@@ -138,6 +117,7 @@ namespace AudioPlayer
             }
         }
 
+        // Playes previous song.
         private void Prev_Click(object sender, RoutedEventArgs e)
         {
             Int32 selectedIndex = Playlist.SelectedIndex;
@@ -153,13 +133,14 @@ namespace AudioPlayer
             PrevNextHelper(selectedIndex);
         }
 
+        // Plays or pauses the song.
         private void PlayPause_Click(object sender, RoutedEventArgs e)
         {
             int ret = -1;
             string playCommand;
             // Opening first file from the list.
 
-            if (!IsPlaying && playListCollection.Count != 0)
+            if (!isPlaying && playListCollection.Count != 0)
             {
                 Image img = (Image) PlayPause.Content;
                 img.Source = new BitmapImage(new Uri("PauseButton.png", UriKind.RelativeOrAbsolute));
@@ -178,10 +159,11 @@ namespace AudioPlayer
                 ret = mciSendString(playCommand, null, 0, IntPtr.Zero);
             }
 
-            IsPlaying = !IsPlaying;
+            isPlaying = !isPlaying;
 
         }
 
+        // Plays next song.
         private void Next_Click(object sender, RoutedEventArgs e)
         {
             Int32 selectedIndex = Playlist.SelectedIndex;
@@ -197,7 +179,8 @@ namespace AudioPlayer
             PrevNextHelper(selectedIndex);
         }
 
-        private void PrevNextHelper(Int32 selectedIndex) //it encapsulates common code from Prev_Click and Next_Click
+        // Encapsulates common code from Prev_Click() and Next_Click() events.
+        private void PrevNextHelper(Int32 selectedIndex) 
         {
             if (playListCollection.Count != 0)
             {
@@ -215,7 +198,7 @@ namespace AudioPlayer
                 playCommand = "Open \"" + filePath + "\" type mpegvideo alias " + mediaName;
                 ret = mciSendString(playCommand, null, 0, IntPtr.Zero);
 
-                if (IsPlaying)
+                if (isPlaying)
                 {
                     ProgressSlider.Value = 0;
                     playCommand = "Play " + mediaName + " notify";
@@ -224,11 +207,13 @@ namespace AudioPlayer
             }
         }
 
+        // A thread function that runs every second and updates the progress slider.
+        // Progress slider does not get updated when song is not playing.
         private void Run()
         {
-            while (true)
+            while (true) // Infinate loop in another thread.
             {
-                if (IsPlaying && playListCollection.Count != 0)
+                if (isPlaying && playListCollection.Count != 0)
                 {
                     this.Dispatcher.Invoke(() =>
                     {
@@ -245,7 +230,7 @@ namespace AudioPlayer
                         }
                         catch (InvalidCastException e)
                         {
-                            //quick fix, if there is nothing in the buffer then value is 0
+                            //quick fix, if there is nothing in the buffer then length stays 0
                         }
 
                         ret = mciSendString("status " + mediaName + " position", buff, buff.Capacity, IntPtr.Zero);
@@ -256,7 +241,7 @@ namespace AudioPlayer
                         }
                         catch (InvalidCastException e)
                         {
-                            //quick fix, if there is nothing in the buffer then value is 0
+                            //quick fix, if there is nothing in the buffer then position stays 0
                         }
 
                         ProgressSlider.Value = ((float) position / (float) length) * 100;
@@ -268,6 +253,7 @@ namespace AudioPlayer
 
         }
 
+        // Mutes and umutes the player
         private void VolumeButton_Click(object sender, RoutedEventArgs e)
         {
             int ret = -1;
@@ -299,11 +285,10 @@ namespace AudioPlayer
             isMuted = !isMuted;
         }
 
+        // Changes the volume of the player.
         private void VolumeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             int ret = -1;
-            int length = 0;
-            int position = 0;
             int volumeLevel;
 
             StringBuilder buff = new StringBuilder(32);
@@ -321,6 +306,7 @@ namespace AudioPlayer
             ret = mciSendString(playCommand, null, 0, IntPtr.Zero);
         }
 
+        // Shuts down the app.
         private void Poweroff_Click(object sender, RoutedEventArgs e)
         {
             Environment.Exit(0);
@@ -328,7 +314,7 @@ namespace AudioPlayer
 
         private void Playlist_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-
+         
         }
     }
 }
